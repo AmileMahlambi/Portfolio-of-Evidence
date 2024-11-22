@@ -65,5 +65,42 @@ const styles = StyleSheet.create({
       backgroundColor: colors.white,
     },
   });
+  
+  const calculateAveragePrice = (menuItems) => {
+    const courses = {};
+    menuItems.forEach(item => {
+      if (!courses[item.course]) courses[item.course] = { total: 0, count: 0 };
+      courses[item.course].total += parseFloat(item.price);
+      courses[item.course].count++;
+    });
+  
+    return Object.entries(courses).map(([course, data]) => ({
+      course,
+      average: (data.total / data.count).toFixed(2),
+    }));
+  };
+  
+  const HomeScreen = ({ menuItems }) => {
+    const averages = calculateAveragePrice(menuItems);
+  
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Average Price by Course:</Text>
+        <FlatList
+          data={averages}
+          keyExtractor={(item) => item.course}
+          renderItem={({ item }) => (
+            <Text>{item.course}: ${item.average}</Text>
+          )}
+        />
+      </View>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    container: { padding: 16 },
+    title: { fontSize: 18, fontWeight: 'bold' },
+  });
+  
 
-export default HomeScreen;
+  export default HomeScreen;

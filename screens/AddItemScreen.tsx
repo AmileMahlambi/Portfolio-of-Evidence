@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, FlatList, StyleSheet, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -77,5 +77,71 @@ const styles = StyleSheet.create({
       backgroundColor: colors.white,
     },
   });
+
+  
+
+
+const AddItemScreen = ({ menuItems, setMenuItems }) => {
+  const [dishName, setDishName] = useState('');
+  const [description, setDescription] = useState('');
+  const [course, setCourse] = useState('');
+  const [price, setPrice] = useState('');
+
+  const addMenuItem = () => {
+    if (dishName && course && price) {
+      setMenuItems([...menuItems, { dishName, description, course, price }]);
+      setDishName('');
+      setDescription('');
+      setCourse('');
+      setPrice('');
+    }
+  };
+
+  const removeMenuItem = (index) => {
+    setMenuItems(menuItems.filter((_, i) => i !== index));
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput 
+        placeholder="Dish Name" 
+        value={dishName} 
+        onChangeText={setDishName} 
+        style={styles.input} 
+      />
+      <TextInput 
+        placeholder="Course" 
+        value={course} 
+        onChangeText={setCourse} 
+        style={styles.input} 
+      />
+      <TextInput 
+        placeholder="Price" 
+        value={price} 
+        onChangeText={setPrice} 
+        style={styles.input} 
+      />
+      <Button title="Add Item" onPress={addMenuItem} />
+      
+      <FlatList
+        data={menuItems}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.item}>
+            <Text>{item.dishName} - {item.course} - ${item.price}</Text>
+            <Button title="Remove" onPress={() => removeMenuItem(index)} />
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { padding: 16 },
+  input: { borderWidth: 1, marginBottom: 8, padding: 8 },
+  item: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+});
+
 
 export default AddItemScreen;
